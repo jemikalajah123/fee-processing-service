@@ -1,0 +1,39 @@
+{
+  "name": "fee-processing-service",
+  "version": "1.0.0",
+  "description": "Fee Processing Service",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jemikalajah123/fee-processing-service.git"
+  },
+  "author": "philip jemikalajah",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jemikalajah123/fee-processing-service/issues"
+  },
+  "homepage": "https://github.com/jemikalajah123/fee-processing-service#readme",
+  "dependencies": {
+    "config": "^3.3.7",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "express-validator": "^6.14.0",
+    "fs-extra": "^10.0.1",
+    "moment": "^2.29.1",
+    "mongoose": "^6.2.6",
+    "mongoose-paginate-v2": "^1.6.3",
+    "redis": "^4.0.4",
+    "request": "^2.88.2",
+    "response-time": "^2.3.2",
+    "util": "^0.12.4",
+    "validatorjs": "^3.22.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
