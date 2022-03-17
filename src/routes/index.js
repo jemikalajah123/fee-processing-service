@@ -11,7 +11,7 @@ router.get('/', (req, res) => {
 })
 
 router.post('/compute-transaction-fee', FeeController.processTransaction )
-router.post('/fees', FeeController.getFees )
+router.post('/fees', FeeController.createFees )
 
 
 

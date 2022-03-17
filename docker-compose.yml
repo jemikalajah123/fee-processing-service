@@ -1,0 +1,15 @@
+version: '2'
+services:
+  app:
+    container_name: fee_processing_app
+    image: fee_processing_app_image
+    build: .
+    networks:
+      - main_network
+    volumes:
+      - ./src:/app/src
+    ports:
+      - 8080:8080
+networks:
+  main_network:
+    driver: bridge
