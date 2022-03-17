@@ -25,7 +25,7 @@ app.use(responseTime());
 app.use(express.json({ extended: false }))
 
 //Define routes
-app.use('/api/v1', routes);
+app.use('', routes);
 
 // Catching none-existing routes and other errors
 app.use((req, res, next) => {
