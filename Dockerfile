@@ -18,4 +18,4 @@ COPY . .
 EXPOSE 5000
 
 # Run in development mode
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "start"]

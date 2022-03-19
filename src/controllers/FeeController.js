@@ -63,6 +63,7 @@ const processTransaction = async (req, res) => {
         const {Currency, CurrencyCountry, Amount, Customer, PaymentEntity} = inputData
         const {BearsFee} = Customer
         const {Brand,Type,Country,Issuer, Number, SixID} = PaymentEntity
+        const feeNumber = Number
 
         let configs = await Fee.find({feeCurrency: Currency})
         if (configs.length === 0) {
@@ -71,80 +72,281 @@ const processTransaction = async (req, res) => {
             });
         }
         let localeType = checkLocale(CurrencyCountry,Country)
-        configs = await Fee.find({feeCurrency: Currency, feeLocale: localeType})
-        if (configs.length !== 0) {
-            if (configs.length === 1) {
-                let data = applyConfiguration(configs[0],Amount,BearsFee)
-                return res.status(200).json(data);
+        if((Type === "CREDIT-CARD" || Type === "DEBIT-CARD")){
+            //No wildcard
+            if(Brand !== ""){
+                configs = await Fee.find({feeCurrency: Currency, feeLocale: localeType,feeEntityAndProperty:`${Type}(${Brand})`})
+                response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
             }
-            configs = await Fee.find({feeCurrency: Currency, feeLocale: localeType,feeEntityAndProperty:{$regex : Type}})
-            if (configs.length !== 0) {
-                if (configs.length === 1) {
-                    let data = applyConfiguration(configs[0],Amount,BearsFee)
-                    return res.status(200).json(data);
-                }
-                if((Type === "CREDIT-CARD" || Type === "DEBIT-CARD")){
-                    if(Brand !== ""){
-                        configs = await Fee.find({feeCurrency: Currency, feeLocale: localeType,feeEntityAndProperty:{$regex : `${Type}(${Brand})`}})
-                        if (configs.length !== 0) {
-                            if (configs.length === 1) {
-                                let data = applyConfiguration(configs[0],Amount,BearsFee)
-                                return res.status(200).json(data);
-                            }
-                        }
-                    }
-                    if(SixID !== ""){
-                        configs = await Fee.find({feeCurrency: Currency, feeLocale: localeType,feeEntityAndProperty:{$regex : `${Type}(${SixID})`}})
-                        if (configs.length !== 0) {
-                            if (configs.length === 1) {
-                                let data = applyConfiguration(configs[0],Amount,BearsFee)
-                                return res.status(200).json(data);
-                            }
-                        }
-                    }
-                    if(Number !== ""){
-                        configs = await Fee.find({feeCurrency: Currency, feeLocale: localeType,feeEntityAndProperty:{$regex : `${Type}(${Number})`}})
-                        if (configs.length !== 0) {
-                            if (configs.length === 1) {
-                                let data = applyConfiguration(configs[0],Amount,BearsFee)
-                                return res.status(200).json(data);
-                            }
-                        }
-                    }
-                    if(Issuer !== ""){
-                        configs = await Fee.find({feeCurrency: Currency, feeLocale: localeType,feeEntityAndProperty:{$regex : `${Type}(${Issuer})`}})
-                        if (configs.length !== 0) {
-                            if (configs.length === 1) {
-                                let data = applyConfiguration(configs[0],Amount,BearsFee)
-                                return res.status(200).json(data);
-                            }
-                        }
-                    }
-
-                }
-                if((Type === "BANK-ACCOUNT" || Type === "WALLET-CARD" || Type === "USSD")){
-                    if(Number !== ""){
-                        configs = await Fee.find({feeCurrency: Currency, feeLocale: localeType,feeEntityAndProperty:{$regex : `${Type}(${Number})`}})
-                        if (configs.length !== 0) {
-                            if (configs.length === 1) {
-                                let data = applyConfiguration(configs[0],Amount,BearsFee)
-                                return res.status(200).json(data);
-                            }
-                        }
-                    }
-                    if(Issuer !== ""){
-                        configs = await Fee.find({feeCurrency: Currency, feeLocale: localeType,feeEntityAndProperty:{$regex : `${Type}(${Issuer})`}})
-                        if (configs.length !== 0) {
-                            if (configs.length === 1) {
-                                let data = applyConfiguration(configs[0],Amount,BearsFee)
-                                return res.status(200).json(data);
-                            }
-                        }
-                    }
-
-                }
+            if(SixID !== ""){
+                configs = await Fee.find({feeCurrency: Currency, feeLocale: localeType,feeEntityAndProperty: `${Type}(${SixID}`})
+                response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
             }
+            if(feeNumber !== ""){
+                configs = await Fee.find({feeCurrency: Currency, feeLocale: localeType,feeEntityAndProperty: `${Type}(${feeNumber})`})
+                response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+            }
+            if(Issuer !== ""){
+                configs = await Fee.find({feeCurrency: Currency, feeLocale: localeType,feeEntityAndProperty: `${Type}(${Issuer})`})
+                response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+            }
+
+            //one wildcard
+            configs = await Fee.find({feeCurrency: Currency, feeLocale: localeType,feeEntityAndProperty:`${Type}(*)`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: Currency, feeLocale: localeType,feeEntityAndProperty:`*(${Brand})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: Currency, feeLocale: localeType,feeEntityAndProperty:`*(${feeNumber})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: Currency, feeLocale: localeType,feeEntityAndProperty:`*(${SixID})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: Currency, feeLocale: localeType,feeEntityAndProperty:`*(${Issuer})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: Currency, feeLocale: `*`,feeEntityAndProperty:`${Type}(${Brand})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: Currency, feeLocale: `*`,feeEntityAndProperty:`${Type}(${feeNumber})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: Currency, feeLocale: `*`,feeEntityAndProperty:`${Type}(${SixID})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: Currency, feeLocale: `*`,feeEntityAndProperty:`${Type}(${Issuer})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: `*`, feeLocale: localeType,feeEntityAndProperty:`${Type}(${Brand})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: `*`, feeLocale: localeType,feeEntityAndProperty:`${Type}(${feeNumber})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: `*`, feeLocale: localeType,feeEntityAndProperty:`${Type}(${SixID})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: `*`, feeLocale: localeType,feeEntityAndProperty:`${Type}(${Issuer})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            //two wildcards
+            configs = await Fee.find({feeCurrency: `*`, feeLocale: `*`,feeEntityAndProperty:`${Type}(${Brand})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: `*`, feeLocale: `*`,feeEntityAndProperty:`${Type}(${feeNumber})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: `*`, feeLocale: `*`,feeEntityAndProperty:`${Type}(${SixID})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: `*`, feeLocale: `*`,feeEntityAndProperty:`${Type}(${Issuer})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: `*`, feeLocale: localeType,feeEntityAndProperty:`*(${Brand})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: `*`, feeLocale: localeType,feeEntityAndProperty:`*(${feeNumber})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: `*`, feeLocale: localeType,feeEntityAndProperty:`*(${SixID})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: `*`, feeLocale: localeType,feeEntityAndProperty:`*(${Issuer})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: Currency, feeLocale: `*`,feeEntityAndProperty:`*(${Brand})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: Currency, feeLocale: `*`,feeEntityAndProperty:`*(${feeNumber})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: Currency, feeLocale: `*`,feeEntityAndProperty:`*(${SixID})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: Currency, feeLocale: `*`,feeEntityAndProperty:`*(${Issuer})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: Currency, feeLocale: localeType,feeEntityAndProperty:`*(*)`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: '*', feeLocale: localeType,feeEntityAndProperty:`${Type}(*)`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: Currency, feeLocale: '*',feeEntityAndProperty:`${Type}(*)`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            //three wildcards
+
+            configs = await Fee.find({feeCurrency: '*', feeLocale: '*',feeEntityAndProperty:`*(${Brand})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: '*', feeLocale: '*',feeEntityAndProperty:`*(${feeNumber})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: '*', feeLocale: '*',feeEntityAndProperty:`*(${SixID})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: '*', feeLocale: '*',feeEntityAndProperty:`*(${Issuer})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: '*', feeLocale: '*',feeEntityAndProperty:`${Type}(*)`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: '*', feeLocale: localeType,feeEntityAndProperty:`*(*)`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: Currency, feeLocale: '*',feeEntityAndProperty:`*(*)`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
         }
+
+
+        if((Type === "BANK-ACCOUNT" || Type === "WALLET-CARD" || Type === "USSD")){
+            if(feeNumber !== ""){
+                configs = await Fee.find({feeCurrency: Currency, feeLocale: localeType,feeEntityAndProperty: `${Type}(${feeNumber})`})
+                response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+            }
+            if(Issuer !== ""){
+                configs = await Fee.find({feeCurrency: Currency, feeLocale: localeType,feeEntityAndProperty: `${Type}(${Issuer})` })
+                response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+            }
+
+            //one wildcard
+            configs = await Fee.find({feeCurrency: Currency, feeLocale: localeType,feeEntityAndProperty:`${Type}(*)`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: Currency, feeLocale: localeType,feeEntityAndProperty:`*(${feeNumber})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: Currency, feeLocale: localeType,feeEntityAndProperty:`*(${Issuer})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: Currency, feeLocale: `*`,feeEntityAndProperty:`${Type}(${feeNumber})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: Currency, feeLocale: `*`,feeEntityAndProperty:`${Type}(${Issuer})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: `*`, feeLocale: localeType,feeEntityAndProperty:`${Type}(${feeNumber})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: `*`, feeLocale: localeType,feeEntityAndProperty:`${Type}(${Issuer})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            //two wildcards
+            configs = await Fee.find({feeCurrency: `*`, feeLocale: `*`,feeEntityAndProperty:`${Type}(${feeNumber})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: `*`, feeLocale: `*`,feeEntityAndProperty:`${Type}(${Issuer})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: `*`, feeLocale: localeType,feeEntityAndProperty:`*(${feeNumber})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: `*`, feeLocale: localeType,feeEntityAndProperty:`*(${Issuer})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: Currency, feeLocale: `*`,feeEntityAndProperty:`*(${feeNumber})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: Currency, feeLocale: `*`,feeEntityAndProperty:`*(${Issuer})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: Currency, feeLocale: localeType,feeEntityAndProperty:`*(*)`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: '*', feeLocale: localeType,feeEntityAndProperty:`${Type}(*)`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: Currency, feeLocale: '*',feeEntityAndProperty:`${Type}(*)`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+           
+            //three wildcards
+            configs = await Fee.find({feeCurrency: '*', feeLocale: '*',feeEntityAndProperty:`*(${feeNumber})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: '*', feeLocale: '*',feeEntityAndProperty:`*(${Issuer})`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: '*', feeLocale: '*',feeEntityAndProperty:`${Type}(*)`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: '*', feeLocale: localeType,feeEntityAndProperty:`*(*)`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+            configs = await Fee.find({feeCurrency: Currency, feeLocale: '*',feeEntityAndProperty:`*(*)`})
+            response = await prepareConfig(configs,Amount,BearsFee)
+            if(response !== false){return res.status(200).json(response)}
+
+        }
+       
+        //generic
+        configs = await Fee.find({feeCurrency: '*', feeLocale: '*', feeEntityAndProperty:`*(*)`})
+        response = await prepareConfig(configs,Amount,BearsFee)
+        if(response !== false){return res.status(200).json(response)}
         
     } catch (error) {
         await log("FeeException", error, "default");
@@ -156,9 +358,21 @@ const processTransaction = async (req, res) => {
     }
 }
 
+const prepareConfig = (configs,amount,bearsFee) => {
+    if (configs.length !== 0) {
+        if (configs.length === 1) {
+            let data = applyConfiguration(configs[0],amount,bearsFee)
+            return data;
+        }
+        return false
+    }
+    return false
+}
+
 
 
 module.exports = {
     processTransaction,
     createFees,
+    prepareConfig
   };
