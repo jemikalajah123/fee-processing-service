@@ -1,15 +1,11 @@
 const express = require('express');
 const {} = require("dotenv/config");
 const connectDB = require('./config/database');
-const redis = require('redis');
 const responseTime = require('response-time')
 const { log } = require("./logger");
 const routes = require("./src/routes");
 
-
 const app = express();
-const client = redis.createClient();
-
 
 //connect db
 connectDB();
