@@ -10,11 +10,6 @@ const app = express();
 //connect db
 connectDB();
 
-//print redis errors
-client.on('error', (err) => {
-    console.log("Error" + err);
-})
-
 app.use(responseTime());
 
 //init Middleware
