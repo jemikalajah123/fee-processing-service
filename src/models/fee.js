@@ -1,60 +1,60 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const FeeSchema = new mongoose.Schema({
   feeId: {
     type: String,
-    unique:true
+    unique: true,
   },
   feeCurrency: {
-    type: String
+    type: String,
   },
   priority: {
     type: Number,
-    default: 0
+    default: 0,
   },
   feeLocale: {
-    type: String
+    type: String,
   },
   feeProperty: {
-    type: String
+    type: String,
   },
   feeEntity: {
-    type: String
+    type: String,
   },
   feeType: {
-    type: String
+    type: String,
   },
   feeValue: {
     type: String,
   },
   createdAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
-const Fee = mongoose.model('fee', FeeSchema);
+const Fee = mongoose.model("fee", FeeSchema);
 
 const FeeRepo = {
   findOne: async (data) => {
-    return Fee.findOne(data)
+    return Fee.findOne(data);
   },
-  findConfigs: async({feeCurrency, feeLocale, feeEntity, feeProperty}) => {
+  findConfigs: async ({ feeCurrency, feeLocale, feeEntity, feeProperty }) => {
     return Fee.find({
-      feeLocale: {$in: [...feeLocale, '*']},
-      feeCurrency: {$in: [...feeCurrency, '*']},
-      feeEntity: {$in: [...feeEntity, '*']},
-      feeProperty: {$in: [...feeProperty, '*']},
+      feeLocale: { $in: [...feeLocale, "*"] },
+      feeCurrency: { $in: [...feeCurrency, "*"] },
+      feeEntity: { $in: [...feeEntity, "*"] },
+      feeProperty: { $in: [...feeProperty, "*"] },
     }).sort({
-        priority: 1
+      priority: 1,
     });
   },
-  findCurrency: async(currency) => {
-    return Fee.find({feeCurrency: currency})
+  findCurrency: async (currency) => {
+    return Fee.find({ feeCurrency: currency });
   },
-  insertMany: async(data,options) => {
-    return Fee.insertMany(data,options);
-  }
-}
+  insertMany: async (data, options) => {
+    return Fee.insertMany(data, options);
+  },
+};
 
 module.exports = FeeRepo;

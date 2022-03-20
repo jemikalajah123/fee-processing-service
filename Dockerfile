@@ -15,7 +15,7 @@ RUN npm install
 COPY . .
 
 # Ports
-EXPOSE 8080
+EXPOSE 6000
 
 # Run in development mode
 CMD ["npm", "run", "dev"]

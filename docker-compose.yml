@@ -1,4 +1,4 @@
-version: '2'
+version: "2"
 services:
   app:
     container_name: fee_processing_app
@@ -9,7 +9,7 @@ services:
     volumes:
       - ./src:/app/src
     ports:
-      - 8080:8080
+      - 6000:6000
 networks:
   main_network:
     driver: bridge
