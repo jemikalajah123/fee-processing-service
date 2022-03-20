@@ -2,7 +2,10 @@
 
 A Node Js Fee processing service, that applys the must specific fee configuration to a transaction.
 
-## Development Environment
+## APIs Documentation
+There is an API documentation built with postman to assist you on understanding the APIs usage. Click here to view the documentation https://documenter.getpostman.com/view/10333949/UVsPQkVU
+
+### Development Environment
 
 ### Setup
 
@@ -17,7 +20,7 @@ Clone the [repository](https://github.com/sodiadrhain/movie-web-app.git) and pro
 ### Running App locally
 
 This app is written with Nodejs; Enter the folloeing commands to start app locally
-### Setup env for the Project
+## Setup env for the Project
 
 Create a .env file containing the keys in the env.example file with your own configs; use the cmd to create the env from your root dir
 
