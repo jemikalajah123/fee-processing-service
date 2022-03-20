@@ -50,7 +50,7 @@ npm run docker:bash
 
 to build image and container for app
 
-when this is done, app will basically start on port `8080`.
+when this is done, app will basically start on port `6000`.
 
 ### Viewing the running ports
 
@@ -63,11 +63,11 @@ docker ps
 You will be given a printout showing your running containers. Part of the printout should contain something like this:
 
 ```
-.....   0.0.0.0:8080->8080/tcp,     fee-processing-app
+.....   0.0.0.0:6000->6000/tcp,     fee-processing-app
 
 ```
 
-This tells you that the various machines exist "locally" at 0.0.0.0 and that the exposed service port have been mapped to port 8080.
+This tells you that the various machines exist "locally" at 0.0.0.0 and that the exposed service port have been mapped to port 6000.
 
 ### Stopping Container
 
@@ -93,6 +93,6 @@ This will start the container again.
 
 To load the homepage of the app, visit the url below in a browser:
 
-    http://0.0.0.0:8080
+    http://0.0.0.0:6000
 
 Thus your adventure begins... The project is up and running.
