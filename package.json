@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
-    "test": "test"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -27,13 +27,13 @@
     "moment": "^2.29.1",
     "mongoose": "^6.2.6",
     "mongoose-paginate-v2": "^1.6.3",
-    "redis": "^4.0.4",
     "request": "^2.88.2",
     "response-time": "^2.3.2",
     "util": "^0.12.4",
     "validatorjs": "^3.22.1"
   },
   "devDependencies": {
+    "jest": "^27.5.1",
     "nodemon": "^2.0.15"
   }
 }

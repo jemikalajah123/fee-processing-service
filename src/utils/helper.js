@@ -5,14 +5,6 @@ const checkLocale = (currencyCountry, country) => {
 	return 'INTL';
 };
 
-const FEE_ENTITYS = [
-	'CREDIT-CARD',
-	'DEBIT-CARD',
-	'BANK-ACCOUNT',
-	'USSD',
-	'WALLET-ID',
-];
-
 const applyConfiguration = (configuration, amount, bearsFee) => {
 	let appliedFee = 0
 	switch (configuration.feeType) {
@@ -58,7 +50,6 @@ const getSettlementAmount = (chargeAmount,appliedFeeValue) => {
 
 module.exports = { 
     checkLocale,
-    FEE_ENTITYS,
 	getAppliedFee,
 	getSettlementAmount,
 	getChargeAmount,

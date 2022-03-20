@@ -10,7 +10,7 @@ router.get('/', (req, res) => {
     });
 })
 
-router.post('/compute-transaction-fee', FeeController.processTransaction )
+router.post('/compute-transaction-fee', FeeController.computeTransaction )
 router.post('/fees', FeeController.createFees )
 
 
