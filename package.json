@@ -6,10 +6,7 @@
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
-    "test": "jest",
-    "docker:bash": "docker-compose up -d",
-    "docker:up": "docker container start fee_processing_app",
-    "docker:down": "docker container stop fee_processing_app"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
