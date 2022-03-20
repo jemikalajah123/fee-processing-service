@@ -63,7 +63,7 @@ You will be given a printout showing your running containers. Part of the printo
 
 ```
 
-This tells you that the various machines exist "locally" at 0.0.0.0 and that the exposed web port have been mapped to port 8080.
+This tells you that the various machines exist "locally" at 0.0.0.0 and that the exposed service port have been mapped to port 8080.
 
 ### Stopping Container
 
