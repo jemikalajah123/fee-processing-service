@@ -1,14 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fee
+  name: example
   labels:
-    app: fee
+    app: example
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: fee
+      app: example
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -17,10 +17,10 @@ spec:
   template:
     metadata:
       labels:
-        app: fee
+        app: example
     spec:
       containers:
-      - name: fee
+      - name: example
         image: <IMAGE>
         ports:
         - containerPort: 80
@@ -33,7 +33,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: fee-service
+  name: example-service
 spec:
   type: LoadBalancer
   ports:
@@ -42,4 +42,4 @@ spec:
       port: 80
       targetPort: 80
   selector:
-    app: fee
+    app: example
