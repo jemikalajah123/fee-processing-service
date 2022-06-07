@@ -22,19 +22,19 @@ jobs:
       - name: Checkout master
         uses: actions/checkout@master
     # Install doctl.
-    - name: Install doctl
-      uses: digitalocean/action-doctl@v2
-      with:
-        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-    # Build a Docker image of your application in your registry and tag the image with the $GITHUB_SHA.
-    - name: Build container image
-      run: docker build -t ${{ secrets.REGISTRY_NAME }}/example:$(echo $GITHUB_SHA | head -c7) .
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      # Build a Docker image of your application in your registry and tag the image with the $GITHUB_SHA.
+      - name: Build container image
+        run: docker build -t ${{ secrets.REGISTRY_NAME }}/example:$(echo $GITHUB_SHA | head -c7) .
 
-    - name: Log in to DigitalOcean Container Registry with short-lived credentials
-      run: doctl registry login --expiry-seconds 1200
+      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+        run: doctl registry login --expiry-seconds 1200
 
-    - name: Push image to DigitalOcean Container Registry
-      run: docker push ${{ secrets.REGISTRY_NAME }}/example:$(echo $GITHUB_SHA | head -c7)
+      - name: Push image to DigitalOcean Container Registry
+        run: docker push ${{ secrets.REGISTRY_NAME }}/example:$(echo $GITHUB_SHA | head -c7)
 
   deploy:
     name: Deploy
